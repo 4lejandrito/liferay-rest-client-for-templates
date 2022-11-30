@@ -1,14 +1,5 @@
 <#assign
-    entriesQueryDefinition = objectUtil("com.liferay.portal.kernel.dao.orm.QueryDefinition")
-    blogsEntryLocalService = serviceLocator.findService(
-        "com.liferay.blogs.service.BlogsEntryLocalService"
-    )
-/>
-${entriesQueryDefinition.setStart(getterUtil.getInteger(-1))}
-${entriesQueryDefinition.setEnd(getterUtil.getInteger(-1))}
-${entriesQueryDefinition.setStatus(getterUtil.getInteger(0))}
-<#assign
-    blogEntries = blogsEntryLocalService.getGroupEntries(groupId, entriesQueryDefinition)
+    blogEntries = restClient.get("/headless-delivery/v1.0/sites/${groupId}/blog-postings?sort=dateCreated:asc").items
 />
 
 <div class="widget-mode-simple">
@@ -21,8 +12,8 @@ ${entriesQueryDefinition.setStatus(getterUtil.getInteger(0))}
                             <div class="autofit-col">
                                 <@liferay_ui["user-portrait"]
                                     cssClass="user-icon-lg"
-                                    userId=curBlogEntry.userId
-                                    userName=curBlogEntry.userName
+                                    userId=curBlogEntry.creator.id
+                                    userName=curBlogEntry.creator.name
                                 />
                             </div>
 
@@ -32,12 +23,12 @@ ${entriesQueryDefinition.setStatus(getterUtil.getInteger(0))}
                                         <#assign
                                             viewEntryURL = themeDisplay.getPathMain() +
                                             "/blogs/find_entry?p_l_id=" + themeDisplay.getPlid() +
-                                            "&entryId=" + curBlogEntry.getEntryId()
+                                            "&entryId=" + curBlogEntry.id
                                         />
                                         <h3 class="title">
                                             <a
                                                 class="title-link"
-                                                href="${viewEntryURL}">${htmlUtil.escape(curBlogEntry.getTitle())}
+                                                href="${viewEntryURL}">${htmlUtil.escape(curBlogEntry.headline)}
                                             </a>
                                         </h3>
                                     </div>
@@ -48,7 +39,7 @@ ${entriesQueryDefinition.setStatus(getterUtil.getInteger(0))}
                                         <div class="autofit-row">
                                             <div class="autofit-col autofit-col-expand">
                                                 <small>
-                                                    <strong>${curBlogEntry.userName}</strong>
+                                                    <strong>${curBlogEntry.creator.name}</strong>
                                                 </small>
                                             </div>
                                         </div>
