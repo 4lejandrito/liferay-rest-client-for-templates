@@ -40,6 +40,9 @@
                                             <div class="autofit-col autofit-col-expand">
                                                 <small>
                                                     <strong>${curBlogEntry.creator.name}</strong>
+                                                    <#list restClient.get("/headless-admin-user/v1.0/user-accounts/${curBlogEntry.creator.id}/emojies").items as emoji>
+                                                        ${emoji.code}
+                                                    </#list>
                                                 </small>
                                             </div>
                                         </div>
